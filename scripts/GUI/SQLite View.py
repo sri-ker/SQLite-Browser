@@ -1,6 +1,6 @@
 from Tkinter import *
 import ttk
-import tkFileDialog
+import tkFileDialog   #http://tkinter.unpythonic.net/wiki/tkFileDialog
 
 import sqlite3
 
@@ -29,6 +29,7 @@ root.geometry('500x300')
 def view_interface():
 	view = Tk()
 	view.title("View Table" + " " + variable_table_choosing.get())
+	view.geometry('500x300')
 	tree = ttk.Treeview(view)
 
 	temp_result = con.execute("select * from "+variable_table_choosing.get())
@@ -69,6 +70,7 @@ def view_interface():
 	def view_all():
 		view = Tk()
 		view.title("View all")
+		view.geometry('600x300')
 		tree = ttk.Treeview(view)
 
 		tree["columns"]=column_name_and_type
@@ -77,7 +79,7 @@ def view_interface():
 			tree.heading(i, text=i)
 		for i in range(n_row):
 			tree.insert("", "end", text=str(i+1), values=query_result[i])
-		tree.pack()
+		tree.place(x=50, y=50)
 	Button(view, text="View all", command=view_all).pack()
 
 	def export_to_csv():
@@ -97,7 +99,7 @@ def view_interface():
 		f.write(to_write)
 		f.close()
 
-	Button(view, text="Export to .CSV", command=export_to_csv).pack()
+	Button(view, text="Export all to .CSV", command=export_to_csv).pack()
 
 	tree.pack()
  	# tree view:
