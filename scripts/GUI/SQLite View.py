@@ -7,18 +7,31 @@ import sqlite3
 app_name = "SQLite View"
 version_num = "0.1"
 
-root=Tk()
 
-'''
-# this three lines help detect the screen resolution and set the size of the window to be the
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
-print screen_height
-print screen_width
-root.geometry(str(screen_width) + "x" + str(screen_height))
-'''
-root.title(app_name + " " +version_num)
-root.geometry('500x300')
+
+
+#######################################
+############# View interface #############
+#######################################
+def execute_SQL():
+	query_interface = Tk()
+	query_interface.title("SQL Query Execution")
+	query_interface.geometry('400x180')
+	Label(query_interface, text="Query:").place(x = 20, y= 20)
+	sentence=StringVar()
+	query=Text(query_interface, width=30, height=5)
+	query.place(x = 20, y = 40)
+	
+	def submit():
+		view.destroy()
+		con.execute(query.get('1.0', END))
+		view_interface()
+		query_interface.destroy()
+		
+	Button(query_interface, text="Submit", comman=submit).place(x=260, y=70)
+	# SQL_query="insert into b values(2,'test')"
+	# execution_result = con.execute(SQL_query)
+	# con.commit()
 
 
 #######################################
@@ -27,19 +40,19 @@ root.geometry('500x300')
 
 
 def view_interface():
+	global view
 	view = Tk()
-	view.title("View Table" + " " + variable_table_choosing.get())
-	view.geometry('500x300')
+	view.title("View Table" + " '" + variable_table_choosing.get()+"'")
+	view.geometry('1000x300')
 	tree = ttk.Treeview(view)
+	tree['show'] = "headings"
 
 	temp_result = con.execute("select * from "+variable_table_choosing.get())
 	temp_column_name = con.execute("pragma table_info(" + variable_table_choosing.get() + ");").fetchall()
 	
-	column_name_and_type=[]
+	column_name=[]
 	for i in range(len(temp_column_name)):
-		column_name_and_type.append(" (".join(temp_column_name[i][1:3]) + ")")
-
-
+		column_name.append(temp_column_name[i][1])
 
 
 	query_result = temp_result.fetchall()
@@ -51,8 +64,8 @@ def view_interface():
 	n_col = len(query_result[0])
 
 
-	tree["columns"]=column_name_and_type
-	for i in column_name_and_type:
+	tree["columns"]=column_name
+	for i in column_name:
 		tree.column(i, width=100)
 		tree.heading(i, text=i)
 
@@ -66,26 +79,27 @@ def view_interface():
 	def view_all():
 		view = Tk()
 		view.title("View all")
-		view.geometry('600x300')
+		view.geometry('1000x300')
 		tree = ttk.Treeview(view)
+		tree['show'] = 'headings'
 
-		tree["columns"]=column_name_and_type
-		for i in column_name_and_type:
+		tree["columns"]=column_name
+		for i in column_name:
 			tree.column(i, width=100)
 			tree.heading(i, text=i)
 		for i in range(n_row):
 			tree.insert("", "end", text=str(i+1), values=query_result[i])
-		tree.place(x=50, y=50)
+		tree.place(x=20, y=20)
 
-		Label(view, text="Size: " + str(n_row) + "rows, " + str(n_col) + " columns.").pack()
+		Label(view, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').place(x=20, y=230)
 
-	Button(view, text="View all", command=view_all).pack()
+	Button(view, text="View all", command=view_all).place(x=30, y=50)
 
 	def export_to_csv():
 		save_path = tkFileDialog.asksaveasfilename(title="Where to export?", defaultextension="*.csv")
 		
 		
-		csv_content=[",".join(column_name_and_type)]
+		csv_content=[",".join(column_name)]
 		for i in range(n_row):
 			for j in range(n_col):
 				query_result[i]=list(query_result[i])
@@ -98,10 +112,12 @@ def view_interface():
 		f.write(to_write)
 		f.close()
 
-	Button(view, text="Export all to .CSV", command=export_to_csv).pack()
+	Button(view, text="Export all to .CSV", command=export_to_csv).place(x=30, y=80)
 
-	tree.pack()
-	Label(view, text="Size: " + str(n_row) + "rows, " + str(n_col) + " columns.").pack()
+	Button(view, text="Execute SQL Query", command=execute_SQL, font='Helvetica 14 bold').place(x=30, y=110)
+
+	tree.place(x=200, y=30)
+	Label(view, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').place(x=200, y=240)
  	# tree view:
  	# http://www.tkdocs.com/tutorial/tree.html
 
@@ -112,7 +128,7 @@ def view_interface():
 def main_interface():
 	main = Tk()
 	main.title(app_name + " " +version_num)
-	main.geometry('600x300')
+	main.geometry('510x300')
 
 	
 	if(db_type == "existing"):
@@ -138,8 +154,9 @@ def main_interface():
 
 	# http://knowpapa.com/ttk-treeview/
 	tree = ttk.Treeview(main)
+	tree['show'] = "headings"
 	tree["columns"]=("one")
-	tree.column("one", width=100 )
+	tree.column("one", width=200 )
 	tree.heading("one", text="Table")
 
 	for i in range(len(table_list)):
@@ -147,17 +164,17 @@ def main_interface():
  
 	tree.place(x=50, y=50)
 
-	Label(main, text="Choose table to manipulate:").place(x=380, y=100)
+	Label(main, text="Choose table to manipulate:").place(x=300, y=100)
 
 	global variable_table_choosing
 	variable_table_choosing = StringVar(main)
 	variable_table_choosing.set(table_list[0]) # default value
 
 	table_choosing = apply(OptionMenu, (main, variable_table_choosing) + tuple(table_list))
-	table_choosing.place(x=380, y=120)
+	table_choosing.place(x=300, y=120)
 
 
-	Button(main, text="Ok", comman=view_interface).place(x=385, y=150)
+	Button(main, text="Ok", comman=view_interface).place(x=305, y=150)
 
 
 
@@ -166,6 +183,20 @@ def main_interface():
 #######################################
 ############# Begin GUI #############
 #######################################
+
+root=Tk()
+
+'''
+# this three lines help detect the screen resolution and set the size of the window to be the
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+print screen_height
+print screen_width
+root.geometry(str(screen_width) + "x" + str(screen_height))
+'''
+root.title(app_name + " " +version_num)
+root.geometry('500x200')
+
 
 db_type="?"
 
