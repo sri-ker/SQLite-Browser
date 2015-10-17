@@ -9,7 +9,7 @@ I've bundled this application into a .app file which can be run on a Mac. You ca
 You can also directly download the source code and run it.
 
 ## Usage & Gallary
-<img src="https://github.com/XD-DENG/XD-DENG.github.io/blob/master/image/SQLite_Viewer/1.png" width="100">
+<img src="https://github.com/XD-DENG/XD-DENG.github.io/blob/master/image/SQLite_Viewer/1.png" width="500">
 
 
 
