@@ -39,7 +39,7 @@ def view_interface():
 	for i in range(len(temp_column_name)):
 		column_name_and_type.append(" (".join(temp_column_name[i][1:3]) + ")")
 
-	print column_name_and_type
+
 
 
 	query_result = temp_result.fetchall()
@@ -50,10 +50,6 @@ def view_interface():
 	n_row = len(query_result)
 	n_col = len(query_result[0])
 
-	for i in range(n_row):
-		for j in range(n_col):
-			print query_result[i][j]
-		print "\n"
 
 	tree["columns"]=column_name_and_type
 	for i in column_name_and_type:
@@ -80,6 +76,9 @@ def view_interface():
 		for i in range(n_row):
 			tree.insert("", "end", text=str(i+1), values=query_result[i])
 		tree.place(x=50, y=50)
+
+		Label(view, text="Size: " + str(n_row) + "rows, " + str(n_col) + " columns.").pack()
+
 	Button(view, text="View all", command=view_all).pack()
 
 	def export_to_csv():
@@ -102,6 +101,7 @@ def view_interface():
 	Button(view, text="Export all to .CSV", command=export_to_csv).pack()
 
 	tree.pack()
+	Label(view, text="Size: " + str(n_row) + "rows, " + str(n_col) + " columns.").pack()
  	# tree view:
  	# http://www.tkdocs.com/tutorial/tree.html
 
@@ -114,13 +114,13 @@ def main_interface():
 	main.title(app_name + " " +version_num)
 	main.geometry('600x300')
 
-	print db_type
+	
 	if(db_type == "existing"):
 		db_path = db_path_entry.get()
 	else:
 		db_path = new_db_entry.get()
 
-	print db_path
+	
 
 	global con
 	con = sqlite3.connect(db_path)
@@ -129,7 +129,7 @@ def main_interface():
 	for row in table_list_cursor:
 		table_list.append(row[0])
 
-	print table_list
+	
 
 	if len(table_list)==0:
 		table_list.append("!EMPTY!")
