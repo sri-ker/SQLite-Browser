@@ -25,6 +25,7 @@ root.geometry('500x300')
 ############# View interface #############
 #######################################
 
+
 def view_interface():
 	view = Tk()
 	view.title("View Table" + " " + variable_table_choosing.get())
@@ -39,7 +40,12 @@ def view_interface():
 
 	print column_name_and_type
 
+
 	query_result = temp_result.fetchall()
+	# if(view_all_flag != 1):
+	# 	query_result=query_result[0:30]
+	query_result=query_result[0:30]
+
 	n_row = len(query_result)
 	n_col = len(query_result[0])
 
@@ -56,9 +62,24 @@ def view_interface():
 	for i in range(n_row):
 		tree.insert("", "end", text=str(i+1), values=query_result[i])
 
-	# This button doesn't work yet
-	Button(view, text="View all", command=view_interface).pack()
-	
+	def view_all():
+		view = Tk()
+		view.title("View all")
+		tree = ttk.Treeview(view)
+
+		tree["columns"]=column_name_and_type
+		for i in column_name_and_type:
+			tree.column(i, width=100)
+			tree.heading(i, text=i)
+		for i in range(n_row):
+			tree.insert("", "end", text=str(i+1), values=query_result[i])
+		tree.pack()
+	Button(view, text="View all", command=view_all).pack()
+
+	def export_to_csv():
+		pass
+	Button(view, text="Export to .CSV", command=export_to_csv).pack()
+
 	tree.pack()
  	# tree view:
  	# http://www.tkdocs.com/tutorial/tree.html
@@ -149,23 +170,23 @@ Button(root, text = 'open', command = main_interface).place(x = 50, y=100 )
 
 
 
-new_db_label = Label(root, text = "Build a new database:")
-new_db_label.place(x = 50, y = 140)
+# new_db_label = Label(root, text = "Build a new database:")
+# new_db_label.place(x = 50, y = 140)
 
-name=StringVar()
-new_db_entry = Entry(root, textvariable = name)
-new_db_entry.place(x = 50, y = 160)
+# name=StringVar()
+# new_db_entry = Entry(root, textvariable = name)
+# new_db_entry.place(x = 50, y = 160)
 
-def get_new_db_name():
-	global db_type
-	db_type = "new"
-	temp_path = tkFileDialog.asksaveasfilename(title = 'Build new database')
-	new_db_entry.delete(0, END)
-	new_db_entry.insert(0, temp_path+'.db')
+# def get_new_db_name():
+# 	global db_type
+# 	db_type = "new"
+# 	temp_path = tkFileDialog.asksaveasfilename(title = 'Build new database')
+# 	new_db_entry.delete(0, END)
+# 	new_db_entry.insert(0, temp_path+'.db')
 
-Button(root, text = 'Browse...', command = get_new_db_name).place(x = 250, y = 160)
+# Button(root, text = 'Browse...', command = get_new_db_name).place(x = 250, y = 160)
 
-Button(root, text = 'Build', command = main_interface).place(x = 50, y=190 )
+# Button(root, text = 'Build', command = main_interface).place(x = 50, y=190 )
 
 
 
