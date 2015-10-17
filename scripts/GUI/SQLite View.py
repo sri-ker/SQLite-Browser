@@ -10,29 +10,6 @@ version_num = "0.1"
 
 
 
-#######################################
-############# View interface #############
-#######################################
-def execute_SQL():
-	query_interface = Tk()
-	query_interface.title("SQL Query Execution")
-	query_interface.geometry('400x180')
-	Label(query_interface, text="Query:").place(x = 20, y= 20)
-	sentence=StringVar()
-	query=Text(query_interface, width=30, height=5)
-	query.place(x = 20, y = 40)
-	
-	def submit():
-		view.destroy()
-		con.execute(query.get('1.0', END))
-		view_interface()
-		query_interface.destroy()
-		
-	Button(query_interface, text="Submit", comman=submit).place(x=260, y=70)
-	# SQL_query="insert into b values(2,'test')"
-	# execution_result = con.execute(SQL_query)
-	# con.commit()
-
 
 #######################################
 ############# View interface #############
@@ -43,38 +20,50 @@ def view_interface():
 	global view
 	view = Tk()
 	view.title("View Table" + " '" + variable_table_choosing.get()+"'")
-	view.geometry('1000x300')
+	view.geometry('1000x500')
 	tree = ttk.Treeview(view)
 	tree['show'] = "headings"
 
-	temp_result = con.execute("select * from "+variable_table_choosing.get())
-	temp_column_name = con.execute("pragma table_info(" + variable_table_choosing.get() + ");").fetchall()
-	
-	column_name=[]
-	for i in range(len(temp_column_name)):
-		column_name.append(temp_column_name[i][1])
+	global view_work
+	def view_work():
+
+		for i in tree.get_children():
+			tree.delete(i)
+
+		temp_result = con.execute("select * from "+variable_table_choosing.get())
+		temp_column_name = con.execute("pragma table_info(" + variable_table_choosing.get() + ");").fetchall()
+		
+		global column_name
+		column_name=[]
+		for i in range(len(temp_column_name)):
+			column_name.append(temp_column_name[i][1])
+
+		global query_result
+		query_result = temp_result.fetchall()
+		# if(view_all_flag != 1):
+		# 	query_result=query_result[0:30]
+		#query_result=query_result[0:30]
+		global n_row
+		global n_col
+		n_row = len(query_result)
+		n_col = len(query_result[0])
 
 
-	query_result = temp_result.fetchall()
-	# if(view_all_flag != 1):
-	# 	query_result=query_result[0:30]
-	#query_result=query_result[0:30]
+		tree["columns"]=column_name
+		for i in column_name:
+			tree.column(i, width=100)
+			tree.heading(i, text=i)
 
-	n_row = len(query_result)
-	n_col = len(query_result[0])
+		if(n_row>=30):
+			for i in range(30):
+				tree.insert("", "end", text=str(i+1), values=query_result[i])
+		else:
+			for i in range(n_row):
+				tree.insert("", "end", text=str(i+1), values=query_result[i])
+		
+		Label(view, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').place(x=200, y=240)
 
-
-	tree["columns"]=column_name
-	for i in column_name:
-		tree.column(i, width=100)
-		tree.heading(i, text=i)
-
-	if(n_row>=30):
-		for i in range(30):
-			tree.insert("", "end", text=str(i+1), values=query_result[i])
-	else:
-		for i in range(n_row):
-			tree.insert("", "end", text=str(i+1), values=query_result[i])
+	view_work()
 
 	def view_all():
 		view = Tk()
@@ -114,12 +103,22 @@ def view_interface():
 
 	Button(view, text="Export all to .CSV", command=export_to_csv).place(x=30, y=80)
 
-	Button(view, text="Execute SQL Query", command=execute_SQL, font='Helvetica 14 bold').place(x=30, y=110)
-
 	tree.place(x=200, y=30)
-	Label(view, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').place(x=200, y=240)
+	
  	# tree view:
  	# http://www.tkdocs.com/tutorial/tree.html
+
+ 	Label(view, text="Query:").place(x = 30, y= 270)
+	sentence=StringVar()
+	query=Text(view, width=40, height=5)
+	query.place(x = 30, y = 290)
+
+	def submit():
+		con.execute(query.get('1.0', END))
+		con.commit()
+		view_work()
+
+	Button(view, text="Submit", comman=submit).place(x=340, y=320)
 
 #######################################
 ############# choosing interface #############
