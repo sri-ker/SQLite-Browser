@@ -44,7 +44,7 @@ def view_interface():
 	query_result = temp_result.fetchall()
 	# if(view_all_flag != 1):
 	# 	query_result=query_result[0:30]
-	query_result=query_result[0:30]
+	#query_result=query_result[0:30]
 
 	n_row = len(query_result)
 	n_col = len(query_result[0])
@@ -59,8 +59,12 @@ def view_interface():
 		tree.column(i, width=100)
 		tree.heading(i, text=i)
 
-	for i in range(n_row):
-		tree.insert("", "end", text=str(i+1), values=query_result[i])
+	if(n_row>=30):
+		for i in range(30):
+			tree.insert("", "end", text=str(i+1), values=query_result[i])
+	else:
+		for i in range(n_row):
+			tree.insert("", "end", text=str(i+1), values=query_result[i])
 
 	def view_all():
 		view = Tk()
@@ -77,7 +81,22 @@ def view_interface():
 	Button(view, text="View all", command=view_all).pack()
 
 	def export_to_csv():
-		pass
+		save_path = tkFileDialog.asksaveasfilename(title="Where to export?", defaultextension="*.csv")
+		
+		
+		csv_content=[",".join(column_name_and_type)]
+		for i in range(n_row):
+			for j in range(n_col):
+				query_result[i]=list(query_result[i])
+				query_result[i][j] = str(query_result[i][j])
+			csv_content.append(",".join(query_result[i]))
+		
+		to_write = "\n".join(csv_content)
+
+		f=open(save_path, "w")
+		f.write(to_write)
+		f.close()
+
 	Button(view, text="Export to .CSV", command=export_to_csv).pack()
 
 	tree.pack()
