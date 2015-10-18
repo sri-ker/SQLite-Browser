@@ -5,7 +5,7 @@ import tkFileDialog   #http://tkinter.unpythonic.net/wiki/tkFileDialog
 import sqlite3
 
 app_name = "SQLite View"
-version_num = "0.1"
+version_num = "0.11"
 
 
 
@@ -17,21 +17,58 @@ version_num = "0.1"
 
 
 def view_interface():
+
+
 	global view
 	view = Tk()
-	view.title("View Table" + " '" + variable_table_choosing.get()+"'")
+	view.title("View Tables")
 	view.geometry('1000x500')
 	tree = ttk.Treeview(view)
 	tree['show'] = "headings"
 
-	global view_work
+
+	if(db_type == "existing"):
+		db_path = db_path_entry.get()
+	else:
+		db_path = new_db_entry.get()
+
+
+	global con
+	con = sqlite3.connect(db_path)
+	table_list_cursor = con.execute("select name from sqlite_master where type = 'table';")
+	table_list=[]
+	for row in table_list_cursor:
+		table_list.append(row[0])
+
+	if len(table_list)==0:
+		table_list.append("!EMPTY!")
+
+
+
+	# global variable_table_choosing
+	variable_table_choosing = StringVar(view)
+	variable_table_choosing.set(table_list[0]) # default value
+
+	Label(view, text="Table:").place(x=30,y=30)
+	table_choosing = apply(OptionMenu, (view, variable_table_choosing) + tuple(table_list))
+	table_choosing.place(x=30, y=50)
+
+	
+	def choose_table():
+		view_work()
+
+	Button(view, text="Choose", comman=choose_table).place(x=30, y=75)
+
+	# global view_work
 	def view_work():
 
+		# delete all the entries in the tree currently
 		for i in tree.get_children():
 			tree.delete(i)
 
-		temp_result = con.execute("select * from "+variable_table_choosing.get())
-		temp_column_name = con.execute("pragma table_info(" + variable_table_choosing.get() + ");").fetchall()
+		table_choosed=variable_table_choosing.get()
+		temp_result = con.execute("select * from "+table_choosed)
+		temp_column_name = con.execute("pragma table_info(" + table_choosed + ");").fetchall()
 		
 		global column_name
 		column_name=[]
@@ -51,7 +88,7 @@ def view_interface():
 
 		tree["columns"]=column_name
 		for i in column_name:
-			tree.column(i, width=100)
+			tree.column(i, width=80)
 			tree.heading(i, text=i)
 
 		if(n_row>=30):
@@ -82,7 +119,7 @@ def view_interface():
 
 		Label(view, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').place(x=20, y=230)
 
-	Button(view, text="View all", command=view_all).place(x=30, y=50)
+	Button(view, text="View all", command=view_all).place(x=30, y=120)
 
 	def export_to_csv():
 		save_path = tkFileDialog.asksaveasfilename(title="Where to export?", defaultextension="*.csv")
@@ -101,7 +138,7 @@ def view_interface():
 		f.write(to_write)
 		f.close()
 
-	Button(view, text="Export all to .CSV", command=export_to_csv).place(x=30, y=80)
+	Button(view, text="Export all to .CSV", command=export_to_csv).place(x=30, y=150)
 
 	tree.place(x=200, y=30)
 	
@@ -119,63 +156,6 @@ def view_interface():
 		view_work()
 
 	Button(view, text="Submit", comman=submit).place(x=340, y=320)
-
-#######################################
-############# choosing interface #############
-#######################################
-
-def main_interface():
-	main = Tk()
-	main.title(app_name + " " +version_num)
-	main.geometry('510x300')
-
-	
-	if(db_type == "existing"):
-		db_path = db_path_entry.get()
-	else:
-		db_path = new_db_entry.get()
-
-	
-
-	global con
-	con = sqlite3.connect(db_path)
-	table_list_cursor = con.execute("select name from sqlite_master where type = 'table';")
-	table_list=[]
-	for row in table_list_cursor:
-		table_list.append(row[0])
-
-	
-
-	if len(table_list)==0:
-		table_list.append("!EMPTY!")
-
-	Label(main, text="Table List:").place(x=50, y=30)
-
-	# http://knowpapa.com/ttk-treeview/
-	tree = ttk.Treeview(main)
-	tree['show'] = "headings"
-	tree["columns"]=("one")
-	tree.column("one", width=200 )
-	tree.heading("one", text="Table")
-
-	for i in range(len(table_list)):
-		tree.insert("" , "end",  text=str(i+1), values=(table_list[i]))
- 
-	tree.place(x=50, y=50)
-
-	Label(main, text="Choose table to manipulate:").place(x=300, y=100)
-
-	global variable_table_choosing
-	variable_table_choosing = StringVar(main)
-	variable_table_choosing.set(table_list[0]) # default value
-
-	table_choosing = apply(OptionMenu, (main, variable_table_choosing) + tuple(table_list))
-	table_choosing.place(x=300, y=120)
-
-
-	Button(main, text="Ok", comman=view_interface).place(x=305, y=150)
-
-
 
 
 
@@ -217,7 +197,7 @@ def get_db_path():
 Button(root, text = 'Browse...', command = get_db_path).place(x = 250, y = 70)
 
 
-Button(root, text = 'open', command = main_interface).place(x = 50, y=100 )
+Button(root, text = 'open', command = view_interface).place(x = 50, y=100 )
 
 
 
