@@ -33,6 +33,7 @@ def view_interface():
 		db_path = new_db_entry.get()
 
 
+	# build the connection with the .db file
 	global con
 	con = sqlite3.connect(db_path)
 	table_list_cursor = con.execute("select name from sqlite_master where type = 'table';")
@@ -59,6 +60,12 @@ def view_interface():
 
 	Button(view, text="Choose", comman=choose_table).place(x=30, y=75)
 
+
+	# this two lines are added to help show the current table in viewer.
+	# the specific table name will be assigned within function view_work below
+	current_table_to_show = Label(view, text=" ")
+	current_table_to_show.place(x=200, y=20)
+	
 	# global view_work
 	def view_work():
 
@@ -98,7 +105,16 @@ def view_interface():
 			for i in range(n_row):
 				tree.insert("", "end", text=str(i+1), values=query_result[i])
 		
-		Label(view, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').place(x=200, y=240)
+		# current_table_to_show = StringVar()
+		# current_table_to_show_label = Label(view, textvariable=current_table_to_show)
+		# current_table_to_show_label.place(x=200, y=20)
+		# current_table_to_show.set("Current Table: "+variable_table_choosing.get())
+
+		
+		current_table_to_show.configure(text="Current Table: "+str(variable_table_choosing.get()))
+		
+		table_size=Label(view, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12')
+		table_size.place(x=200, y=260)
 
 	view_work()
 
@@ -140,22 +156,22 @@ def view_interface():
 
 	Button(view, text="Export all to .CSV", command=export_to_csv).place(x=30, y=150)
 
-	tree.place(x=200, y=30)
+	tree.place(x=200, y=50)
 	
  	# tree view:
  	# http://www.tkdocs.com/tutorial/tree.html
 
- 	Label(view, text="Query:").place(x = 30, y= 270)
+ 	Label(view, text="Query:").place(x = 30, y= 290)
 	sentence=StringVar()
 	query=Text(view, width=40, height=5)
-	query.place(x = 30, y = 290)
+	query.place(x = 30, y = 310)
 
 	def submit():
 		con.execute(query.get('1.0', END))
 		con.commit()
 		view_work()
 
-	Button(view, text="Submit", comman=submit).place(x=340, y=320)
+	Button(view, text="Submit", comman=submit).place(x=340, y=340)
 
 
 
