@@ -14,19 +14,13 @@ A window is provided in this application in case that you need to execute any SQ
 
 ## Installation
 ### 1. Download Application file for Mac
-I've bundled this application into a .app file which can be run on a Mac. You can directly get it in "distribution" folder and unzip it. 
+I've bundled this application into a .app file which can be run on a Mac. You can directly get it in "Ready Application File" folder and unzip it.
 
 ### 2. Running from Source Code
 You can also directly download the source code and run it.
 
 ## Usage & Gallary
-<img src="https://github.com/XD-DENG/XD-DENG.github.io/blob/master/image/SQLite_Viewer/1.png" width="400">
-
-<img src="https://github.com/XD-DENG/XD-DENG.github.io/blob/master/image/SQLite_Viewer/2.png" width="400">
-
-<img src="https://github.com/XD-DENG/XD-DENG.github.io/blob/master/image/SQLite_Viewer/3.png" width="400">
-
-<img src="https://github.com/XD-DENG/XD-DENG.github.io/blob/master/image/SQLite_Viewer/4.png" width="400">
+Under construction
 
 
 

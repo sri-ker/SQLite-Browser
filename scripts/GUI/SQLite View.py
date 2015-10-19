@@ -65,6 +65,11 @@ def view_interface():
 	# the specific table name will be assigned within function view_work below
 	current_table_to_show = Label(view, text=" ")
 	current_table_to_show.place(x=200, y=20)
+
+	# these two lines are added to hlep show the table size in viewer
+	# the specific size will be assined within  the function view_work below
+	table_size=Label(view, text=" ", font='Helvetica 12')
+	table_size.place(x=200, y=260)
 	
 	# global view_work
 	def view_work():
@@ -112,11 +117,12 @@ def view_interface():
 
 		
 		current_table_to_show.configure(text="Current Table: "+str(variable_table_choosing.get()))
-		
-		table_size=Label(view, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12')
-		table_size.place(x=200, y=260)
+		table_size.configure(text = "Size: " + str(n_row) + " rows, " + str(n_col) + " columns.")
 
 	view_work()
+
+
+
 
 	def view_all():
 		view = Tk()
@@ -136,6 +142,10 @@ def view_interface():
 		Label(view, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').place(x=20, y=230)
 
 	Button(view, text="View all", command=view_all).place(x=30, y=120)
+
+
+
+
 
 	def export_to_csv():
 		save_path = tkFileDialog.asksaveasfilename(title="Where to export?", defaultextension="*.csv")
@@ -160,6 +170,11 @@ def view_interface():
 	
  	# tree view:
  	# http://www.tkdocs.com/tutorial/tree.html
+
+
+
+
+
 
  	Label(view, text="Query:").place(x = 30, y= 290)
 	sentence=StringVar()
@@ -232,7 +247,6 @@ Button(root, text = 'open', command = view_interface).place(x = 50, y=100 )
 # 	new_db_entry.insert(0, temp_path+'.db')
 
 # Button(root, text = 'Browse...', command = get_new_db_name).place(x = 250, y = 160)
-
 # Button(root, text = 'Build', command = main_interface).place(x = 50, y=190 )
 
 
