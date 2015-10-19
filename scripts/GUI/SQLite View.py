@@ -1,12 +1,13 @@
 from Tkinter import *
 import ttk
 import tkFileDialog   #http://tkinter.unpythonic.net/wiki/tkFileDialog
+import os
 
 import sqlite3
 
+
 app_name = "SQLite View"
 version_num = "0.11"
-
 
 
 
@@ -18,11 +19,12 @@ version_num = "0.11"
 
 def view_interface():
 
-
 	global view
 	view = Tk()
 	view.title("View Tables")
-	view.geometry('1000x500')
+	view.geometry('900x550')
+	
+
 	tree = ttk.Treeview(view)
 	tree['show'] = "headings"
 
@@ -45,12 +47,11 @@ def view_interface():
 		table_list.append("!EMPTY!")
 
 
-
 	# global variable_table_choosing
 	variable_table_choosing = StringVar(view)
 	variable_table_choosing.set(table_list[0]) # default value
 
-	Label(view, text="Table:").place(x=30,y=30)
+	Label(view, text="Table:", font='Helvetica 14 bold').place(x=30,y=30)
 	table_choosing = apply(OptionMenu, (view, variable_table_choosing) + tuple(table_list))
 	table_choosing.place(x=30, y=50)
 
@@ -63,7 +64,7 @@ def view_interface():
 
 	# this two lines are added to help show the current table in viewer.
 	# the specific table name will be assigned within function view_work below
-	current_table_to_show = Label(view, text=" ")
+	current_table_to_show = Label(view, text=" ", font='Helvetica 15 bold')
 	current_table_to_show.place(x=200, y=20)
 
 	# these two lines are added to hlep show the table size in viewer
@@ -167,26 +168,47 @@ def view_interface():
 	Button(view, text="Export all to .CSV", command=export_to_csv).place(x=30, y=150)
 
 	tree.place(x=200, y=50)
-	
  	# tree view:
  	# http://www.tkdocs.com/tutorial/tree.html
 
 
 
-
-
-
- 	Label(view, text="Query:").place(x = 30, y= 290)
+ 	Label(view, text="Query:", font='Helvetica 15 bold').place(x = 200, y= 300)
 	sentence=StringVar()
-	query=Text(view, width=40, height=5)
-	query.place(x = 30, y = 310)
+	query=Text(view, width=40, height=5, background="lightblue")
+	query.place(x = 200, y = 320)
 
 	def submit():
 		con.execute(query.get('1.0', END))
 		con.commit()
 		view_work()
 
-	Button(view, text="Submit", comman=submit).place(x=340, y=340)
+
+	Button(view, text="Submit", comman=submit).place(x=510, y=350)
+
+
+	# STATUS module
+
+	Label(view, text="Status:", font='Helvetica 15 bold').place(x = 200, y= 430)
+	Label(view, text="Database File Location: "+db_path).place(x = 200, y = 450)
+	# BUG:  for now, if I create a table with SQL execution, the number here will not change correspondingly.
+	status_num_of_table = Label(view, text="Number of Tables: " + str(len(table_list)))
+	status_num_of_table.place(x = 200, y = 470)
+
+	# the lines below are used to modify the unit of file size automatically. 
+	# The dafault unit is "bytes".
+	# if the file size is too big, it would be better to use 'Kb' or 'Mb' correspondingly.
+	db_file_size = os.path.getsize(db_path)
+	if db_file_size > 10485760:
+		db_file_size = db_file_size/1048576.0
+		db_file_size_unit = "Mb"
+	elif db_file_size > 102400:
+		db_file_size = db_file_size/1024.0
+		db_file_size_unit = "Kb"
+	else:
+		db_file_size_unit = "Bytes"
+
+	Label(view, text="Database File Size: "+str(db_file_size)+" "+db_file_size_unit).place(x = 200, y = 490)
 
 
 
@@ -248,9 +270,6 @@ Button(root, text = 'open', command = view_interface).place(x = 50, y=100 )
 
 # Button(root, text = 'Browse...', command = get_new_db_name).place(x = 250, y = 160)
 # Button(root, text = 'Build', command = main_interface).place(x = 50, y=190 )
-
-
-
 
 
 mainloop()

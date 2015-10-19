@@ -1,0 +1,4 @@
+If I drop a table in the SQL execution module, the table list and the number of tables can't be updated correspondingly.
+
+
+[Already addressed]: in the status module, to have this feature: if the file size is small, use “bytes”. If it’s big, use “MB”. automatically.
