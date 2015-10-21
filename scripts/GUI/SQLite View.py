@@ -44,7 +44,21 @@ def view_interface():
 		table_list.append(row[0])
 
 	if len(table_list)==0:
-		table_list.append("!EMPTY!")
+		table_list.append("-EMPTY-")
+
+	if table_list[0]=='-EMPTY-':
+		empty_warning=Tk()
+		empty_warning.title("Empty Database File")
+		empty_warning.geometry('250x100')
+
+		view.destroy()
+
+		w = Message(empty_warning, text="This database file is empty.", width=300, font='Helvetica 16 bold')
+		w.place(x=40, y=20)
+
+		def close():
+			empty_warning.destroy()
+		Button(empty_warning, text="Okay", command=close).place(x=100, y=60)
 
 
 	# global variable_table_choosing

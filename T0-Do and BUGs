@@ -6,3 +6,6 @@ If I drop a table in the SQL execution module, the table list and the number of 
 if i’m writing into one database (.db), I can’t use this app to open it. Error “database is locked” will be returned. This app should have a reminding message to tell user that it’s locked instating of showing a blank window.
 
 when i choose a table, only first 30 rows will be showed but all rows will be selected. This will slow down the app. Can only select first 30 rows and show them, and select all when click “view all“
+
+[Addressed] If the .db file opened is empty, the app can’t work well. need to to something on this.
+The current solution is to give reminding and stop proceeding. In the future, I should make it can still work even if the db file is empty. E.g., the users should still be able to do SQL executions.
