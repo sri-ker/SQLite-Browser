@@ -200,10 +200,10 @@ def view_interface():
 	# if the file size is too big, it would be better to use 'Kb' or 'Mb' correspondingly.
 	db_file_size = os.path.getsize(db_path)
 	if db_file_size > 10485760:
-		db_file_size = db_file_size/1048576.0
+		db_file_size = round(db_file_size/1048576.0, 3)
 		db_file_size_unit = "Mb"
 	elif db_file_size > 102400:
-		db_file_size = db_file_size/1024.0
+		db_file_size = round(db_file_size/1024.0, 3)
 		db_file_size_unit = "Kb"
 	else:
 		db_file_size_unit = "Bytes"
