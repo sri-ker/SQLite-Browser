@@ -5,6 +5,8 @@ import os
 
 import sqlite3
 
+from PIL import Image, ImageTk
+
 
 app_name = "SQLite View"
 version_num = "0.11"
@@ -241,8 +243,14 @@ print screen_width
 root.geometry(str(screen_width) + "x" + str(screen_height))
 '''
 root.title(app_name + " " +version_num)
-root.geometry('500x200')
+root.geometry('460x200')
 
+
+logo_file = Image.open("SQLite_logo.png")
+logo_ready = ImageTk.PhotoImage(logo_file)
+
+label = Label(root, image=logo_ready)
+label.place(x=330, y=130)
 
 db_type="?"
 
