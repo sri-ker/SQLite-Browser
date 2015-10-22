@@ -107,9 +107,7 @@ def view_interface():
 
 		global query_result
 		query_result = temp_result.fetchall()
-		# if(view_all_flag != 1):
-		# 	query_result=query_result[0:30]
-		#query_result=query_result[0:30]
+
 		global n_row
 		global n_col
 		n_row = len(query_result)
@@ -244,7 +242,7 @@ print screen_width
 root.geometry(str(screen_width) + "x" + str(screen_height))
 '''
 root.title(app_name + " " +version_num)
-root.geometry('410x200')
+root.geometry('410x300')
 
 
 # logo_file = Image.open("SQLite_logo.png")
@@ -277,22 +275,32 @@ Button(root, text = 'open', command = view_interface).place(x = 50, y=100 )
 
 
 
-# new_db_label = Label(root, text = "Build a new database:")
-# new_db_label.place(x = 50, y = 140)
+# build a new .db file
 
-# name=StringVar()
-# new_db_entry = Entry(root, textvariable = name)
-# new_db_entry.place(x = 50, y = 160)
+new_db_label = Label(root, text = "Build a new database:")
+new_db_label.place(x = 50, y = 160)
 
-# def get_new_db_name():
-# 	global db_type
-# 	db_type = "new"
-# 	temp_path = tkFileDialog.asksaveasfilename(title = 'Build new database')
-# 	new_db_entry.delete(0, END)
-# 	new_db_entry.insert(0, temp_path+'.db')
+name=StringVar()
+new_db_entry = Entry(root, textvariable = name)
+new_db_entry.place(x = 50, y = 180)
 
-# Button(root, text = 'Browse...', command = get_new_db_name).place(x = 250, y = 160)
-# Button(root, text = 'Build', command = main_interface).place(x = 50, y=190 )
+def get_new_db_name():
+	global db_type
+	db_type = "new"
+	temp_path = tkFileDialog.asksaveasfilename(title = 'Build new database')
+	new_db_entry.delete(0, END)
+	new_db_entry.insert(0, temp_path+'.db')
+
+def build():
+	conn_temp = sqlite3.connect(new_db_entry.get())
+	conn_temp.execute("create table test(id int, name text);")
+	conn_temp.execute("insert into test values (1, 'test');")
+	conn_temp.commit()
+	conn_temp.close()
+	view_interface()
+
+Button(root, text = 'Browse...', command = get_new_db_name).place(x = 250, y = 180)
+Button(root, text = 'Build', command = build).place(x = 50, y=210 )
 
 
 mainloop()
