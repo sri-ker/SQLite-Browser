@@ -13,7 +13,6 @@ version_num = "0.11"
 
 
 
-
 #######################################
 ############# View interface #############
 #######################################
@@ -48,6 +47,8 @@ def view_interface():
 	if len(table_list)==0:
 		table_list.append("-EMPTY-")
 
+	# a modeule to deal with the situation in which the .db file is empty.
+	# will give a reminding and close the window.
 	if table_list[0]=='-EMPTY-':
 		empty_warning=Tk()
 		empty_warning.title("Empty Database File")
@@ -55,8 +56,8 @@ def view_interface():
 
 		view.destroy()
 
-		w = Message(empty_warning, text="This database file is empty.", width=300, font='Helvetica 16 bold')
-		w.place(x=40, y=20)
+		w = Message(empty_warning, text="This database file is empty.", width=300, font='Helvetica 15')
+		w.place(x=35, y=20)
 
 		def close():
 			empty_warning.destroy()
@@ -243,7 +244,7 @@ print screen_width
 root.geometry(str(screen_width) + "x" + str(screen_height))
 '''
 root.title(app_name + " " +version_num)
-root.geometry('460x200')
+root.geometry('410x200')
 
 
 # logo_file = Image.open("SQLite_logo.png")
