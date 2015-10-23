@@ -7,7 +7,7 @@ import sqlite3
 
 
 app_name = "SQLite View"
-version_num = "0.12"
+version_num = "0.13"
 
 
 #######################################
@@ -178,6 +178,81 @@ def view_interface():
 		f.close()
 
 	Button(view, text="Export all to .CSV", command=export_to_csv).place(x=30, y=150)
+
+
+	def import_from_csv():
+		import_interface = Tk()
+		import_interface.title("Import Table From .CSV File")
+
+		# entry for the path and name of the CSV file
+		Label(import_interface, text="CSV path").pack()
+		csv_name=StringVar()
+		csv_entry = Entry(import_interface, textvariable = csv_name)
+		csv_entry.pack()
+
+
+		def browse_csv():
+			types = [('.CSV files', '*.csv')]
+			csv_path = tkFileDialog.askopenfilename(title = 'Importing Table From CSV File', filetypes = types)
+			csv_entry.delete(0, END)
+			csv_entry.insert(0, csv_path)
+		Button(import_interface, text="Browse", command=browse_csv).pack()
+
+
+		# specify the name of the new table (which will be built from the CSV file)
+		Label(import_interface, text="new table name:").pack()
+		table_name=StringVar()
+		table_name_entry = Entry(import_interface, textvariable = table_name)
+		table_name_entry.pack()
+
+
+		def import_act():
+			
+			f=open(csv_entry.get())
+			content = f.readlines()
+
+
+			# this function split each row from CSV file into format ready for SQL inserting
+			def split_row(x_row):
+				splitted_row = x_row.split(',')
+				splitted_row[len(splitted_row)-1] = splitted_row[len(splitted_row)-1].split('\n')[0]
+				return splitted_row
+			csv_column_name = split_row(content[0])
+
+			# build the table by SQL
+			for i in range(len(csv_column_name)):
+				csv_column_name[i] = csv_column_name[i]+" text"
+			temp=','.join(csv_column_name)
+			build_command = "create table " + table_name_entry.get()+ "("+ temp +");"
+			print build_command
+			con.execute(build_command)
+			con.commit()
+
+			# insert the content of the CSV into the table whcih was built above
+			for i in range(1, len(content)):
+				print i
+				content[i]=split_row(content[i])
+				for j in range(len(content[i])):
+					content[i][j] = "'" + content[i][j] + "'"
+
+				temp = ",".join(content[i])
+				insert_command="insert into " + table_name_entry.get()+ " values("+temp+");"
+				print insert_command 
+				con.execute(insert_command)
+				con.commit()
+
+		Button(import_interface, text="import", command=import_act).pack()
+
+
+	Button(view, text="Import from .CSV", command=import_from_csv).place(x=30, y=180)
+
+
+
+
+
+
+
+
 
 	tree.place(x=200, y=50)
  	# tree view:
