@@ -5,12 +5,9 @@ import os
 
 import sqlite3
 
-# from PIL import Image, ImageTk
-
 
 app_name = "SQLite View"
-version_num = "0.11"
-
+version_num = "0.12"
 
 
 #######################################
@@ -47,6 +44,7 @@ def view_interface():
 	if len(table_list)==0:
 		table_list.append("-EMPTY-")
 
+
 	# a modeule to deal with the situation in which the .db file is empty.
 	# will give a reminding and close the window.
 	if table_list[0]=='-EMPTY-':
@@ -62,6 +60,7 @@ def view_interface():
 		def close():
 			empty_warning.destroy()
 		Button(empty_warning, text="Okay", command=close).place(x=100, y=60)
+
 
 
 	# global variable_table_choosing
@@ -139,7 +138,6 @@ def view_interface():
 
 
 
-
 	def view_all():
 		view = Tk()
 		view.title("View all")
@@ -158,7 +156,6 @@ def view_interface():
 		Label(view, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').place(x=20, y=230)
 
 	Button(view, text="View all", command=view_all).place(x=30, y=120)
-
 
 
 
@@ -198,8 +195,8 @@ def view_interface():
 		con.commit()
 		view_work()
 
-
 	Button(view, text="Submit", comman=submit).place(x=510, y=350)
+
 
 
 	# STATUS module
@@ -241,24 +238,16 @@ print screen_height
 print screen_width
 root.geometry(str(screen_width) + "x" + str(screen_height))
 '''
+
 root.title(app_name + " " +version_num)
-root.geometry('410x300')
+root.geometry('500x300')
 
-
-# logo_file = Image.open("SQLite_logo.png")
-# logo_ready = ImageTk.PhotoImage(logo_file)
-
-# label = Label(root, image=logo_ready)
-# label.place(x=330, y=130)
-
-db_type="?"
-
-db_path_label = Label(root, text = "Open existing database (.db):")
-db_path_label.place(x = 50, y = 50)
+db_path_label = Label(root, text = "Open existing database (.db):", font='Helvetica 15 bold')
+db_path_label.place(x = 100, y = 45)
 
 name=StringVar()
 db_path_entry = Entry(root, textvariable = name)
-db_path_entry.place(x = 50, y = 70)
+db_path_entry.place(x = 100, y = 70)
 
 def get_db_path():
 	global db_type
@@ -267,22 +256,20 @@ def get_db_path():
 	temp_path = tkFileDialog.askopenfilename(title = 'Existing .db file', filetypes = types)
 	db_path_entry.delete(0, END)
 	db_path_entry.insert(0, temp_path)
+Button(root, text = 'Browse...', command = get_db_path).place(x = 300, y = 70)
 
-Button(root, text = 'Browse...', command = get_db_path).place(x = 250, y = 70)
-
-
-Button(root, text = 'open', command = view_interface).place(x = 50, y=100 )
+Button(root, text = 'open', command = view_interface).place(x = 100, y=100 )
 
 
 
 # build a new .db file
 
-new_db_label = Label(root, text = "Build a new database:")
-new_db_label.place(x = 50, y = 160)
+new_db_label = Label(root, text = "Build a new database:", font='Helvetica 15 bold')
+new_db_label.place(x = 100, y = 155)
 
 name=StringVar()
 new_db_entry = Entry(root, textvariable = name)
-new_db_entry.place(x = 50, y = 180)
+new_db_entry.place(x = 100, y = 180)
 
 def get_new_db_name():
 	global db_type
@@ -290,6 +277,7 @@ def get_new_db_name():
 	temp_path = tkFileDialog.asksaveasfilename(title = 'Build new database')
 	new_db_entry.delete(0, END)
 	new_db_entry.insert(0, temp_path+'.db')
+Button(root, text = 'Browse...', command = get_new_db_name).place(x = 300, y = 180)
 
 def build():
 	conn_temp = sqlite3.connect(new_db_entry.get())
@@ -298,9 +286,7 @@ def build():
 	conn_temp.commit()
 	conn_temp.close()
 	view_interface()
-
-Button(root, text = 'Browse...', command = get_new_db_name).place(x = 250, y = 180)
-Button(root, text = 'Build', command = build).place(x = 50, y=210 )
+Button(root, text = 'Build', command = build).place(x = 100, y=210)
 
 
 mainloop()
