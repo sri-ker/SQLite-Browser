@@ -1,4 +1,4 @@
-If I drop a table or create a table in the SQL execution module, the table list and the number of tables can't be updated correspondingly.
+
 
 If i’m writing into one database (.db), I can’t use this app to open it. Error “database is locked” will be returned. This app should have a reminding message to tell user that it’s locked instating of showing a blank window.
 
@@ -7,7 +7,7 @@ when i choose a table, only first 30 rows will be showed but all rows will be se
 
 in “import from CSV” module, check if the table name is empty. if it is, stop and remind.
 
-For “import from CSV”, add a reminding to tell user the importing is finished. If can, add a progress bar.
+If can, add a progress bar for “importing from CSV”
 ————————————————————————————————————————————————————————————————————————————————
 
 [Addressed] If the .db file opened is empty, the app can’t work well. need to to something on this.
@@ -18,3 +18,7 @@ The current solution is to give reminding and stop proceeding. In the future, I 
 [Addressed] add module to build a new database file.
 
 [addressed] add feature “import from CSV”
+
+[addressed] For “import from CSV”, add a reminding to tell user the importing is finished. 
+
+[addressed] If I drop a table or create a table in the SQL execution module, the table list and the number of tables can't be updated correspondingly.

@@ -124,11 +124,6 @@ def view_interface():
 		else:
 			for i in range(n_row):
 				tree.insert("", "end", text=str(i+1), values=query_result[i])
-		
-		# current_table_to_show = StringVar()
-		# current_table_to_show_label = Label(view, textvariable=current_table_to_show)
-		# current_table_to_show_label.place(x=200, y=20)
-		# current_table_to_show.set("Current Table: "+variable_table_choosing.get())
 
 		
 		current_table_to_show.configure(text="Current Table: "+str(variable_table_choosing.get()))
@@ -181,29 +176,31 @@ def view_interface():
 
 
 	def import_from_csv():
+		global import_interface
 		import_interface = Tk()
+		import_interface.geometry('330x250')
 		import_interface.title("Import Table From .CSV File")
 
 		# entry for the path and name of the CSV file
-		Label(import_interface, text="CSV path").pack()
+		Label(import_interface, text="Target CSV Path:").place(x=30, y=30)
 		csv_name=StringVar()
 		csv_entry = Entry(import_interface, textvariable = csv_name)
-		csv_entry.pack()
+		csv_entry.place(x=30, y=50)
 
 
-		def browse_csv():
+		def browse_csv_path():
 			types = [('.CSV files', '*.csv')]
 			csv_path = tkFileDialog.askopenfilename(title = 'Importing Table From CSV File', filetypes = types)
 			csv_entry.delete(0, END)
 			csv_entry.insert(0, csv_path)
-		Button(import_interface, text="Browse", command=browse_csv).pack()
+		Button(import_interface, text="Browse", command=browse_csv_path).place(x=230, y=50)
 
 
 		# specify the name of the new table (which will be built from the CSV file)
-		Label(import_interface, text="new table name:").pack()
+		Label(import_interface, text="Import into Table:").place(x=30, y=100)
 		table_name=StringVar()
 		table_name_entry = Entry(import_interface, textvariable = table_name)
-		table_name_entry.pack()
+		table_name_entry.place(x=30, y=120)
 
 
 		def import_act():
@@ -211,13 +208,38 @@ def view_interface():
 			f=open(csv_entry.get())
 			content = f.readlines()
 
-
 			# this function split each row from CSV file into format ready for SQL inserting
 			def split_row(x_row):
 				splitted_row = x_row.split(',')
 				splitted_row[len(splitted_row)-1] = splitted_row[len(splitted_row)-1].split('\n')[0]
 				return splitted_row
 			csv_column_name = split_row(content[0])
+
+
+			# check if the new table name is empty
+			if table_name_entry.get()=="":
+				temp = Tk()
+				temp.title("Empty Table Name")
+				temp.geometry('250x100')
+				Message(temp, text="Empty Table Name", width=300, font='Helvetica 14').place(x=35, y=20)
+
+				def close():
+					temp.destroy()
+				Button(temp, text="Okay", command=close).place(x=100, y=60)
+				return 0
+
+			# check if the new table name already exist
+			if table_name_entry.get() in table_list:
+				temp = Tk()
+				temp.title("Table Name exists")
+				temp.geometry('250x100')
+				Message(temp, text="Table Name exists", width=300, font='Helvetica 14').place(x=35, y=20)
+
+				def close():
+					temp.destroy()
+				Button(temp, text="Okay", command=close).place(x=100, y=60)
+				return 0
+
 
 			# build the table by SQL
 			for i in range(len(csv_column_name)):
@@ -241,13 +263,25 @@ def view_interface():
 				con.execute(insert_command)
 				con.commit()
 
-		Button(import_interface, text="import", command=import_act).pack()
+			# the block below is to remind the user once the importing is finished
+			importing_finished_interface = Tk()
+			importing_finished_interface.title("Importing Finished")
+			importing_finished_interface.geometry('250x100')
+			Message(importing_finished_interface, text="Importing finished", width=300, font='Helvetica 14').place(x=35, y=20)
+
+			import_interface.destroy()
+
+			def close():
+				importing_finished_interface.destroy()
+			Button(importing_finished_interface, text="Okay", command=close).place(x=100, y=60)
+
+			view.destroy()
+			view_interface()
+
+		Button(import_interface, text="import", command=import_act).place(x=80, y=180)
 
 
 	Button(view, text="Import from .CSV", command=import_from_csv).place(x=30, y=180)
-
-
-
 
 
 
@@ -259,7 +293,7 @@ def view_interface():
  	# http://www.tkdocs.com/tutorial/tree.html
 
 
-
+ 	# SQL Execution Module
  	Label(view, text="Query:", font='Helvetica 15 bold').place(x = 200, y= 300)
 	sentence=StringVar()
 	query=Text(view, width=40, height=5, background="lightblue")
@@ -268,7 +302,9 @@ def view_interface():
 	def submit():
 		con.execute(query.get('1.0', END))
 		con.commit()
-		view_work()
+		view.destroy()
+		view_interface()
+
 
 	Button(view, text="Submit", comman=submit).place(x=510, y=350)
 
