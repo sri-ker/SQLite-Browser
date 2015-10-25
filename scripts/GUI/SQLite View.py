@@ -172,7 +172,7 @@ def view_interface():
 		f.write(to_write)
 		f.close()
 
-	Button(view, text="Export all to .CSV", command=export_to_csv).place(x=30, y=150)
+	Button(view, text="Export to .CSV", command=export_to_csv).place(x=30, y=150)
 
 
 	def import_from_csv():

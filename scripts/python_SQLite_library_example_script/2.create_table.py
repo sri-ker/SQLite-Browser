@@ -12,7 +12,5 @@ conn.execute('''CREATE TABLE COMPANY
        ADDRESS        CHAR(50),
        SALARY         REAL);''')
 print "Table created successfully";
-conn.execute('''drop table company''')
-print conn.fetchall()
 
 conn.close()
