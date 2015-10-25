@@ -7,7 +7,7 @@ import sqlite3
 
 
 app_name = "SQLite View"
-version_num = "0.13"
+version_num = "0.14"
 
 
 #######################################
@@ -300,8 +300,44 @@ def view_interface():
 	query.place(x = 200, y = 320)
 
 	def submit():
-		con.execute(query.get('1.0', END))
+		temp = con.execute(query.get('1.0', END))
 		con.commit()
+		selected_column_names = temp.description
+		temp = temp.fetchall()
+
+		# if the execution will lead to any content returned, then a separate window will be built to show these contents
+		# This feature is mainly for 'select' execution
+		if len(temp)>0:
+			n_row=len(temp)
+			n_col=len(temp[0])
+
+			# to obtain the column names of the selected result
+			selected_column_names = list(selected_column_names)
+			for i in range(len(selected_column_names)):
+				selected_column_names[i] = selected_column_names[i][0]
+
+			execution_show = Tk()
+			execution_show.title('Execution Result')
+			execution_show.geometry('1000x300')
+			Label(execution_show, text="SQL Command Executed:").place(x=20, y=20)
+			Label(execution_show, text = query.get('1.0', END)).place(x=20, y=40)
+
+			
+			tree = ttk.Treeview(execution_show)
+			tree['show'] = 'headings'
+
+			tree["columns"]=selected_column_names
+			for i in selected_column_names:
+				tree.column(i, width=100)
+				tree.heading(i, text=i)
+			for i in range(n_row):
+				tree.insert("", "end", text=str(i+1), values=temp[i])
+			tree.place(x=20, y=60)
+
+			Label(execution_show, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').place(x=20, y=260)
+
+
+		
 		view.destroy()
 		view_interface()
 
