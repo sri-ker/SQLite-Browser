@@ -5,15 +5,13 @@ If i’m writing into one database (.db), I can’t use this app to open it. Err
 when i choose a table, only first 30 rows will be showed but all rows will be selected. This will slow down the app. Can only select first 30 rows and show them, and select all when click “view all“
 
 
-in “import from CSV” module, check if the table name is empty. if it is, stop and remind.
-
 If can, add a progress bar for “importing from CSV”
 ————————————————————————————————————————————————————————————————————————————————
 
 [Addressed] If the .db file opened is empty, the app can’t work well. need to to something on this.
 The current solution is to give reminding and stop proceeding. In the future, I should make it can still work even if the db file is empty. E.g., the users should still be able to do SQL executions.
 
-[Already addressed]: in the status module, to have this feature: if the file size is small, use “bytes”. If it’s big, use “MB”. automatically.
+[addressed]: in the status module, to have this feature: if the file size is small, use “bytes”. If it’s big, use “MB”. automatically.
 
 [Addressed] add module to build a new database file.
 
@@ -22,3 +20,7 @@ The current solution is to give reminding and stop proceeding. In the future, I 
 [addressed] For “import from CSV”, add a reminding to tell user the importing is finished. 
 
 [addressed] If I drop a table or create a table in the SQL execution module, the table list and the number of tables can't be updated correspondingly.
+
+[addressed] in “import from CSV” module, check if the table name is empty. if it is, stop and remind.
+
+[addressed] In the SQL execution module, if this is a ‘select’ command, a separate window will appear to show the content. Add a button to export these content to a CSV file.

@@ -308,8 +308,11 @@ def view_interface():
 		# if the execution will lead to any content returned, then a separate window will be built to show these contents
 		# This feature is mainly for 'select' execution
 		if len(temp)>0:
+			print temp
 			n_row=len(temp)
 			n_col=len(temp[0])
+			print n_row
+			print n_col
 
 			# to obtain the column names of the selected result
 			selected_column_names = list(selected_column_names)
@@ -318,7 +321,7 @@ def view_interface():
 
 			execution_show = Tk()
 			execution_show.title('Execution Result')
-			execution_show.geometry('1000x300')
+			execution_show.geometry('1000x320')
 			Label(execution_show, text="SQL Command Executed:").place(x=20, y=20)
 			Label(execution_show, text = query.get('1.0', END)).place(x=20, y=40)
 
@@ -335,9 +338,27 @@ def view_interface():
 			tree.place(x=20, y=60)
 
 			Label(execution_show, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').place(x=20, y=260)
+			
 
-
+			def export_to_csv():
+				save_path = tkFileDialog.asksaveasfilename(title="Where to export?", defaultextension="*.csv")
 		
+		
+				csv_content=[",".join(selected_column_names)]
+				for i in range(n_row):
+					for j in range(n_col):
+						temp[i]=list(temp[i])
+						temp[i][j] = str(temp[i][j])
+					csv_content.append(",".join(temp[i]))
+		
+				to_write = "\n".join(csv_content)
+				print to_write
+				f=open(save_path, "w")
+				f.write(to_write)
+				f.close()
+
+			Button(execution_show, text="Export to .CSV", command=export_to_csv).place(x=20, y=280)
+
 		view.destroy()
 		view_interface()
 
