@@ -289,8 +289,6 @@ def view_interface():
 
 
 
-
-
 	tree.place(x=200, y=50)
  	# tree view:
  	# http://www.tkdocs.com/tutorial/tree.html
@@ -401,7 +399,61 @@ def view_interface():
 	Label(view, text="Database File Size: "+str(db_file_size)+" "+db_file_size_unit).place(x = 200, y = 490)
 
 
+	# this is a new feature with which user can filter the records in database with Regular Expression
+	def RE():
+		RE_filter = Tk()
+		RE_filter.title("Filter with Regular Expression")
 
+		variable_table_choosing = StringVar(RE_filter)
+		variable_table_choosing.set(table_list[0]) # default value
+		Label(RE_filter, text="Table:", font='Helvetica 14 bold').pack()
+		table_choosing = apply(OptionMenu, (RE_filter, variable_table_choosing) + tuple(table_list))
+		table_choosing.configure(width=12) # set the width of the OptionMenu widget
+		table_choosing.pack()
+
+		def choose_table_RE():
+			column_select_RE['menu'].delete(0, 'end')
+			table_choosed=variable_table_choosing.get()
+			temp = con.execute("pragma table_info(" + table_choosed + ");").fetchall()
+
+			temp_column_name=[]
+			for i in range(len(temp)):
+				temp_column_name.append(temp[i][1])
+
+			# add the column names of the selected table into the optionMedu widget
+			#http://www.prasannatech.net/2009/06/tkinter-optionmenu-changing-choices.html
+			column_name_RE.set(temp_column_name[0])
+			for i in temp_column_name:
+				column_select_RE["menu"].add_command(label=i, command=lambda temp = i: column_select_RE.setvar(column_select_RE.cget("textvariable"), value = temp))
+
+		Button(RE_filter, text="choose", command=choose_table_RE).pack()
+
+		column_name_RE = StringVar(RE_filter)
+		column_name_RE.set(" ")
+		column_select_RE = OptionMenu(RE_filter, column_name_RE, " ")
+		column_select_RE.pack()
+
+
+		Label(RE_filter, text="Regular Expression:", font='Helvetica 15 bold').pack()
+		RE_query=Text(RE_filter, width=40, height=1, background="lightblue")
+		RE_query.pack()
+
+		def RE_submit():
+			column_to_run_RE = column_name_RE.get()
+			RE_pattern = RE_query.get('1.0', END)
+			RE_pattern = RE_pattern[0:len(RE_pattern)-1]  # the get method in the last line will add a "\n" at the end of the text automatically. So we use this line to remove the "\n"
+			print RE_pattern
+
+			###################
+			## Execute the Regular Expression and return the rows with this pattern
+			###################
+		Button(RE_filter, text="Run", command=RE_submit).pack()
+
+
+
+
+
+	Button(view, text="Filter with\nRegular Expression", height=2, command=RE).place(x=30, y=240)
 
 
 #######################################
