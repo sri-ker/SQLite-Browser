@@ -65,12 +65,12 @@ def view_interface():
 
 
 
-	# global variable_table_choosing
 	variable_table_choosing = StringVar(view)
 	variable_table_choosing.set(table_list[0]) # default value
 
 	Label(view, text="Table:", font='Helvetica 14 bold').place(x=30,y=30)
 	table_choosing = apply(OptionMenu, (view, variable_table_choosing) + tuple(table_list))
+	table_choosing.configure(width=12) # set the width of the OptionMenu widget
 	table_choosing.place(x=30, y=50)
 
 	
@@ -90,7 +90,6 @@ def view_interface():
 	table_size=Label(view, text=" ", font='Helvetica 12')
 	table_size.place(x=200, y=260)
 	
-	# global view_work
 	def view_work():
 
 		# delete all the entries in the tree currently
@@ -135,9 +134,11 @@ def view_interface():
 
 
 
+	Label(view, text="Manipulate:", font='Helvetica 14 bold').place(x=30,y=130)
+
 	def view_all():
 		view = Tk()
-		view.title("View all")
+		view.title("View Complete Table")
 		view.geometry('1000x300')
 		tree = ttk.Treeview(view)
 		tree['show'] = 'headings'
@@ -152,7 +153,7 @@ def view_interface():
 
 		Label(view, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').place(x=20, y=230)
 
-	Button(view, text="View all", command=view_all).place(x=30, y=120)
+	Button(view, text="View Full Table", command=view_all).place(x=30, y=150)
 
 
 
@@ -174,7 +175,7 @@ def view_interface():
 		f.write(to_write)
 		f.close()
 
-	Button(view, text="Export to .CSV", command=export_to_csv).place(x=30, y=150)
+	Button(view, text="Export to .CSV", command=export_to_csv).place(x=30, y=180)
 
 
 	def import_from_csv():
@@ -283,7 +284,7 @@ def view_interface():
 		Button(import_interface, text="import", command=import_act).place(x=80, y=180)
 
 
-	Button(view, text="Import from .CSV", command=import_from_csv).place(x=30, y=180)
+	Button(view, text="Import from .CSV", command=import_from_csv).place(x=30, y=210)
 
 
 
@@ -296,7 +297,7 @@ def view_interface():
 
 
  	# SQL Execution Module
- 	Label(view, text="Query:", font='Helvetica 15 bold').place(x = 200, y= 300)
+ 	Label(view, text="SQL Query:", font='Helvetica 15 bold').place(x = 200, y= 300)
 	sentence=StringVar()
 	query=Text(view, width=40, height=5, background="lightblue")
 	query.place(x = 200, y = 320)
@@ -330,9 +331,9 @@ def view_interface():
 
 			execution_show = Tk()
 			execution_show.title('Execution Result')
-			execution_show.geometry('1000x320')
-			Label(execution_show, text="SQL Command Executed:").place(x=20, y=20)
-			Label(execution_show, text = query.get('1.0', END)).place(x=20, y=40)
+			execution_show.geometry('1000x350')
+			Label(execution_show, text="SQL Command Executed:", font="Helvetica 14 bold").place(x=20, y=20)
+			Label(execution_show, text = query.get('1.0', END),fg="blue").place(x=20, y=40)
 
 			
 			tree = ttk.Treeview(execution_show)
@@ -344,9 +345,9 @@ def view_interface():
 				tree.heading(i, text=i)
 			for i in range(n_row):
 				tree.insert("", "end", text=str(i+1), values=temp[i])
-			tree.place(x=20, y=60)
+			tree.place(x=20, y=80)
 
-			Label(execution_show, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').place(x=20, y=260)
+			Label(execution_show, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').place(x=20, y=280)
 			
 
 			def export_to_csv():
@@ -366,7 +367,7 @@ def view_interface():
 				f.write(to_write)
 				f.close()
 
-			Button(execution_show, text="Export to .CSV", command=export_to_csv).place(x=20, y=280)
+			Button(execution_show, text="Export to .CSV", command=export_to_csv).place(x=18, y=310)
 
 		view.destroy()
 		view_interface()
@@ -435,7 +436,10 @@ def get_db_path():
 	db_path_entry.insert(0, temp_path)
 Button(root, text = 'Browse...', command = get_db_path).place(x = 300, y = 70)
 
-Button(root, text = 'open', command = view_interface).place(x = 100, y=100 )
+def open_db():
+	view_interface()
+
+Button(root, text = 'open', command = open_db).place(x = 100, y=100 )
 
 
 
