@@ -14,6 +14,8 @@ version_num = "0.14"
 ############# View interface #############
 #######################################
 
+# we define here SQL_command here for a feature later in "SQL Execution" and "submit" module
+SQL_command="" # this is a meaningful & useful definiton
 
 def view_interface():
 
@@ -246,20 +248,20 @@ def view_interface():
 				csv_column_name[i] = csv_column_name[i]+" text"
 			temp=','.join(csv_column_name)
 			build_command = "create table " + table_name_entry.get()+ "("+ temp +");"
-			print build_command
+			
 			con.execute(build_command)
 			con.commit()
 
 			# insert the content of the CSV into the table whcih was built above
 			for i in range(1, len(content)):
-				print i
+				
 				content[i]=split_row(content[i])
 				for j in range(len(content[i])):
 					content[i][j] = "'" + content[i][j] + "'"
 
 				temp = ",".join(content[i])
 				insert_command="insert into " + table_name_entry.get()+ " values("+temp+");"
-				print insert_command 
+				
 				con.execute(insert_command)
 				con.commit()
 
@@ -298,9 +300,17 @@ def view_interface():
 	sentence=StringVar()
 	query=Text(view, width=40, height=5, background="lightblue")
 	query.place(x = 200, y = 320)
+	query.insert(END, SQL_command)
 
 	def submit():
-		temp = con.execute(query.get('1.0', END))
+
+		# according to current workflow, once the execution succecced, the "view" window will be closed and built again.
+		# then the SQL command entered last time will be gone.
+		# but in most situations, we want the SQL command we entered to keep there.
+		global SQL_command
+		SQL_command = query.get('1.0', END)
+
+		temp = con.execute(SQL_command)
 		con.commit()
 		selected_column_names = temp.description
 		temp = temp.fetchall()
@@ -308,11 +318,10 @@ def view_interface():
 		# if the execution will lead to any content returned, then a separate window will be built to show these contents
 		# This feature is mainly for 'select' execution
 		if len(temp)>0:
-			print temp
+			
 			n_row=len(temp)
 			n_col=len(temp[0])
-			print n_row
-			print n_col
+			
 
 			# to obtain the column names of the selected result
 			selected_column_names = list(selected_column_names)
@@ -352,7 +361,7 @@ def view_interface():
 					csv_content.append(",".join(temp[i]))
 		
 				to_write = "\n".join(csv_content)
-				print to_write
+				
 				f=open(save_path, "w")
 				f.write(to_write)
 				f.close()
