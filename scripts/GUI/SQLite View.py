@@ -116,7 +116,7 @@ def view_interface():
 
 		tree["columns"]=column_name
 		for i in column_name:
-			tree.column(i, width=80)
+			tree.column(i, width=100)
 			tree.heading(i, text=i)
 
 		if(n_row>=30):
@@ -402,6 +402,8 @@ def view_interface():
 
 
 
+
+
 #######################################
 ############# Begin GUI #############
 #######################################
@@ -418,13 +420,13 @@ root.geometry(str(screen_width) + "x" + str(screen_height))
 '''
 
 root.title(app_name + " " +version_num)
-root.geometry('500x300')
+root.geometry('540x300')
 
 db_path_label = Label(root, text = "Open existing database (.db):", font='Helvetica 15 bold')
 db_path_label.place(x = 100, y = 45)
 
 name=StringVar()
-db_path_entry = Entry(root, textvariable = name)
+db_path_entry = Entry(root, textvariable = name, width=25)
 db_path_entry.place(x = 100, y = 70)
 
 def get_db_path():
@@ -434,7 +436,7 @@ def get_db_path():
 	temp_path = tkFileDialog.askopenfilename(title = 'Existing .db file', filetypes = types)
 	db_path_entry.delete(0, END)
 	db_path_entry.insert(0, temp_path)
-Button(root, text = 'Browse...', command = get_db_path).place(x = 300, y = 70)
+Button(root, text = 'Browse...', command = get_db_path).place(x = 350, y = 70)
 
 def open_db():
 	view_interface()
@@ -449,7 +451,7 @@ new_db_label = Label(root, text = "Build a new database:", font='Helvetica 15 bo
 new_db_label.place(x = 100, y = 155)
 
 name=StringVar()
-new_db_entry = Entry(root, textvariable = name)
+new_db_entry = Entry(root, textvariable = name, width=25)
 new_db_entry.place(x = 100, y = 180)
 
 def get_new_db_name():
@@ -458,7 +460,7 @@ def get_new_db_name():
 	temp_path = tkFileDialog.asksaveasfilename(title = 'Build new database')
 	new_db_entry.delete(0, END)
 	new_db_entry.insert(0, temp_path+'.db')
-Button(root, text = 'Browse...', command = get_new_db_name).place(x = 300, y = 180)
+Button(root, text = 'Browse...', command = get_new_db_name).place(x = 350, y = 180)
 
 def build():
 	conn_temp = sqlite3.connect(new_db_entry.get())
