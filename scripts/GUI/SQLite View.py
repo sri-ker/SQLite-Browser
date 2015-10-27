@@ -227,7 +227,7 @@ def view_interface():
 
 		def import_act():
 			
-			f=open(csv_entry.get())
+			f=open(csv_entry.get(), "r")
 			content = f.readlines()
 
 			# this function split each row from CSV file into format ready for SQL inserting
@@ -435,13 +435,14 @@ def view_interface():
 	def RE():
 		RE_filter = Tk()
 		RE_filter.title("Filter with Regular Expression")
+		RE_filter.geometry('350x230')
 
 		variable_table_choosing = StringVar(RE_filter)
 		variable_table_choosing.set(table_list[0]) # default value
-		Label(RE_filter, text="Table:", font='Helvetica 14 bold').pack()
+		Label(RE_filter, text="Select Table & Column:", font='Helvetica 14 bold').place(x=30, y= 20)
 		table_choosing = apply(OptionMenu, (RE_filter, variable_table_choosing) + tuple(table_list))
-		table_choosing.configure(width=12) # set the width of the OptionMenu widget
-		table_choosing.pack()
+		table_choosing.configure(width=15) # set the width of the OptionMenu widget
+		table_choosing.place(x=30, y=40)
 
 		def choose_table_RE():
 			column_select_RE['menu'].delete(0, 'end')
@@ -458,17 +459,18 @@ def view_interface():
 			for i in temp_column_name:
 				column_select_RE["menu"].add_command(label=i, command=lambda temp = i: column_select_RE.setvar(column_select_RE.cget("textvariable"), value = temp))
 
-		Button(RE_filter, text="choose", command=choose_table_RE).pack()
+		Button(RE_filter, text="choose", command=choose_table_RE).place(x=180, y=40)
 
 		column_name_RE = StringVar(RE_filter)
 		column_name_RE.set(" ")
 		column_select_RE = OptionMenu(RE_filter, column_name_RE, " ")
-		column_select_RE.pack()
+		column_select_RE.configure(width=15)
+		column_select_RE.place(x=30, y=80)
 
 
-		Label(RE_filter, text="Regular Expression:", font='Helvetica 15 bold').pack()
+		Label(RE_filter, text="Pattern:", font='Helvetica 14 bold').place(x=30, y=120)
 		RE_query=Text(RE_filter, width=40, height=1, background="lightblue")
-		RE_query.pack()
+		RE_query.place(x=30, y=140)
 
 		def RE_submit():
 			column_to_run_RE = column_name_RE.get()
@@ -533,8 +535,8 @@ def view_interface():
 				tree.heading(i, text=i)
 			for i in range(n_row):
 				tree.insert("", "end", text=str(i+1), values=exact_result[i])
-			tree.pack()
-			Label(RE_result_view, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').pack()
+			tree.grid(row=0, column=0)
+			Label(RE_result_view, text=str(n_row) + " rows selected.", font='Helvetica 12').grid(row=1, column=0)
 
 			def export_to_csv():
 				save_path = tkFileDialog.asksaveasfilename(title="Where to export?", defaultextension="*.csv")
@@ -553,9 +555,9 @@ def view_interface():
 				f.write(to_write)
 				f.close()
 
-			Button(RE_result_view, text="Export to .CSV", command=export_to_csv).pack()
+			Button(RE_result_view, text="Export to .CSV", command=export_to_csv).grid(row=2, column=0)
 
-		Button(RE_filter, text="Run", command=RE_submit).pack()
+		Button(RE_filter, text="Run", command=RE_submit).place(x=30, y=170)
 
 
 

@@ -9,9 +9,9 @@ If can, add a progress bar for “importing from CSV”
 
 log the history of the SQL commanded entered
 
-[High priority]!!If there is ‘ or “ in the CSV file, it’s quite likely that the import feature will fail. Need to figure this out
+[High priority]!!If there is ‘ or “ or , in the CSV file, it’s quite likely that the import feature will fail. Need to figure this out
 
-Add Regular Expression Filter Module
+
 ————————————————————————————————————————————————————————————————————————————————
 
 [Addressed] If the .db file opened is empty, the app can’t work well. need to to something on this.
@@ -30,3 +30,5 @@ The current solution is to give reminding and stop proceeding. In the future, I 
 [addressed] in “import from CSV” module, check if the table name is empty. if it is, stop and remind.
 
 [addressed] In the SQL execution module, if this is a ‘select’ command, a separate window will appear to show the content. Add a button to export these content to a CSV file.
+
+[addressed in V0.15]Add Regular Expression Filter Module
