@@ -8,6 +8,10 @@ when i choose a table, only first 30 rows will be showed but all rows will be se
 If can, add a progress bar for “importing from CSV”
 
 log the history of the SQL commanded entered
+
+[High priority]!!If there is ‘ or “ in the CSV file, it’s quite likely that the import feature will fail. Need to figure this out
+
+Add Regular Expression Filter Module
 ————————————————————————————————————————————————————————————————————————————————
 
 [Addressed] If the .db file opened is empty, the app can’t work well. need to to something on this.

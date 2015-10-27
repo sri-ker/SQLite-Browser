@@ -2,16 +2,22 @@ from Tkinter import *
 import ttk
 import tkFileDialog   #http://tkinter.unpythonic.net/wiki/tkFileDialog
 import os
+import re  # for regular expression filter module
 
 import sqlite3
 
 
 app_name = "SQLite View"
-version_num = "0.14"
+version_num = "0.15"
+
+############################################################################################################################################################
+############################################################################################################################################################
 
 
 #######################################
-############# View interface #############
+#######################################
+###       View interface            ###
+#######################################
 #######################################
 
 # we define here SQL_command here for a feature later in "SQL Execution" and "submit" module
@@ -136,6 +142,11 @@ def view_interface():
 
 	Label(view, text="Manipulate:", font='Helvetica 14 bold').place(x=30,y=130)
 
+	#----------------------------------------------------------------------------------------------------------------------------------------
+	
+	#######################################
+	# View full table
+	#######################################
 	def view_all():
 		view = Tk()
 		view.title("View Complete Table")
@@ -155,8 +166,11 @@ def view_interface():
 
 	Button(view, text="View Full Table", command=view_all).place(x=30, y=150)
 
+	#----------------------------------------------------------------------------------------------------------------------------------------
 
-
+	#######################################
+	# "export to CSV" module
+	#######################################
 
 	def export_to_csv():
 		save_path = tkFileDialog.asksaveasfilename(title="Where to export?", defaultextension="*.csv")
@@ -177,6 +191,11 @@ def view_interface():
 
 	Button(view, text="Export to .CSV", command=export_to_csv).place(x=30, y=180)
 
+	#----------------------------------------------------------------------------------------------------------------------------------------
+
+	#######################################
+	# "Import from CSV" module
+	#######################################
 
 	def import_from_csv():
 		global import_interface
@@ -293,6 +312,11 @@ def view_interface():
  	# tree view:
  	# http://www.tkdocs.com/tutorial/tree.html
 
+ 	#----------------------------------------------------------------------------------------------------------------------------------------
+
+ 	#######################################
+ 	# "SQL command execution" module
+ 	#######################################
 
  	# SQL Execution Module
  	Label(view, text="SQL Query:", font='Helvetica 15 bold').place(x = 200, y= 300)
@@ -374,8 +398,11 @@ def view_interface():
 	Button(view, text="Submit", comman=submit).place(x=510, y=350)
 
 
+	#----------------------------------------------------------------------------------------------------------------------------------------
 
+	#######################################
 	# STATUS module
+	#######################################
 
 	Label(view, text="Status:", font='Helvetica 15 bold').place(x = 200, y= 430)
 	Label(view, text="Database File Location: "+db_path).place(x = 200, y = 450)
@@ -398,6 +425,11 @@ def view_interface():
 
 	Label(view, text="Database File Size: "+str(db_file_size)+" "+db_file_size_unit).place(x = 200, y = 490)
 
+	#----------------------------------------------------------------------------------------------------------------------------------------
+
+	#######################################
+	# "Regular Expression Filter" Module
+	#######################################
 
 	# this is a new feature with which user can filter the records in database with Regular Expression
 	def RE():
@@ -442,22 +474,102 @@ def view_interface():
 			column_to_run_RE = column_name_RE.get()
 			RE_pattern = RE_query.get('1.0', END)
 			RE_pattern = RE_pattern[0:len(RE_pattern)-1]  # the get method in the last line will add a "\n" at the end of the text automatically. So we use this line to remove the "\n"
-			print RE_pattern
+			
 
-			###################
 			## Execute the Regular Expression and return the rows with this pattern
-			###################
+			def RE_execution(table, column, pattern):
+				
+				# obtain all the data in the column selected
+				RE_command = 'select '+column+' from ' + table
+				data_to_run_RE = con.execute(RE_command)
+				data_to_run_RE = data_to_run_RE.fetchall()
+
+				for i in range(len(data_to_run_RE)):
+					data_to_run_RE[i] = data_to_run_RE[i][0]
+
+
+				# Run Regular Expression and generate a vector which will label if each record meet the requirement of RE
+				match_result_index=[]
+				for i in range(len(data_to_run_RE)):
+					temp_match = re.search(str(pattern), str(data_to_run_RE[i]))
+					if temp_match:
+						match_result_index.append(1)
+					else:
+						match_result_index.append(0)
+
+				return match_result_index
+
+			RE_match_result = RE_execution(variable_table_choosing.get(), column_to_run_RE, RE_pattern)
+			
+
+			RE_result_view = Tk()
+			RE_result_view.title("Result from Regular Expression Filter")
+			RE_result_view.geometry('1000x300')
+			tree = ttk.Treeview(RE_result_view)
+			tree['show'] = 'headings'
+
+			table_choosed=variable_table_choosing.get()
+			temp_result = con.execute("select * from "+table_choosed)
+			temp_column_name = con.execute("pragma table_info(" + table_choosed + ");").fetchall()
+			
+			column_name=[]
+			for i in range(len(temp_column_name)):
+				column_name.append(temp_column_name[i][1])
+
+			query_result = temp_result.fetchall()
+			n_row = len(query_result)
+
+			# Based on the vector obtained above, select the correspding rows and return them
+			exact_result=[]
+			for i in range(n_row):
+				if RE_match_result[i]==1:
+					exact_result.append(query_result[i])
+			n_row = len(exact_result)
+			n_col = len(exact_result[0])
+
+			tree["columns"]=column_name
+			for i in column_name:
+				tree.column(i, width=100)
+				tree.heading(i, text=i)
+			for i in range(n_row):
+				tree.insert("", "end", text=str(i+1), values=exact_result[i])
+			tree.pack()
+			Label(RE_result_view, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').pack()
+
+			def export_to_csv():
+				save_path = tkFileDialog.asksaveasfilename(title="Where to export?", defaultextension="*.csv")
+		
+		
+				csv_content=[",".join(column_name)]
+				for i in range(n_row):
+					for j in range(n_col):
+						exact_result[i]=list(exact_result[i])
+						exact_result[i][j] = str(exact_result[i][j])
+					csv_content.append(",".join(exact_result[i]))
+		
+				to_write = "\n".join(csv_content)
+				
+				f=open(save_path, "w")
+				f.write(to_write)
+				f.close()
+
+			Button(RE_result_view, text="Export to .CSV", command=export_to_csv).pack()
+
 		Button(RE_filter, text="Run", command=RE_submit).pack()
-
-
 
 
 
 	Button(view, text="Filter with\nRegular Expression", height=2, command=RE).place(x=30, y=240)
 
 
+############################################################################################################################################################
+############################################################################################################################################################
+
+
 #######################################
-############# Begin GUI #############
+#######################################
+###             Begin GUI           ###
+#######################################
 #######################################
 
 root=Tk()
@@ -473,6 +585,11 @@ root.geometry(str(screen_width) + "x" + str(screen_height))
 
 root.title(app_name + " " +version_num)
 root.geometry('540x300')
+
+
+#######################################
+# Open Existing .DB file
+#######################################
 
 db_path_label = Label(root, text = "Open existing database (.db):", font='Helvetica 15 bold')
 db_path_label.place(x = 100, y = 45)
@@ -495,9 +612,11 @@ def open_db():
 
 Button(root, text = 'open', command = open_db).place(x = 100, y=100 )
 
+#----------------------------------------------------------------------------------------------------------------------------------------
 
-
-# build a new .db file
+#######################################
+# Build a new .DB file
+#######################################
 
 new_db_label = Label(root, text = "Build a new database:", font='Helvetica 15 bold')
 new_db_label.place(x = 100, y = 155)
@@ -522,6 +641,7 @@ def build():
 	conn_temp.close()
 	view_interface()
 Button(root, text = 'Build', command = build).place(x = 100, y=210)
+
 
 
 mainloop()
