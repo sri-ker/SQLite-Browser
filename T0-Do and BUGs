@@ -11,7 +11,7 @@ log the history of the SQL commanded entered
 
 [High priority]!!If there is ‘ or “ or , in the CSV file, it’s quite likely that the import feature will fail. Need to figure this out
 
-
+In some csv files, “\r” is used instead of “\n” to mark newline. This will cause error (since here I used file open to access .csv files, and if “\r” is used instead of “\n”, then python will think there is only one line).
 ————————————————————————————————————————————————————————————————————————————————
 
 [Addressed] If the .db file opened is empty, the app can’t work well. need to to something on this.

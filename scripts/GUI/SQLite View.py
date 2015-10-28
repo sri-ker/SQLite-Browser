@@ -228,7 +228,7 @@ def view_interface():
 		def import_act():
 			
 			f=open(csv_entry.get(), "r")
-			content = f.readlines()
+			content = f.readlines() # if the csv file contains n rows, then "content" should be a list with length n
 
 			# this function split each row from CSV file into format ready for SQL inserting
 			def split_row(x_row):
