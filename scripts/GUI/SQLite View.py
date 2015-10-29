@@ -164,6 +164,10 @@ def view_interface():
 
 		Label(view, text="Size: " + str(n_row) + " rows, " + str(n_col) + " columns.", font='Helvetica 12').place(x=20, y=230)
 
+		def close():
+			view.destroy()
+		Button(view, text="Close", command = close).place(x=20, y=250)
+
 	Button(view, text="View Full Table", command=view_all).place(x=30, y=150)
 
 	#----------------------------------------------------------------------------------------------------------------------------------------
@@ -300,7 +304,11 @@ def view_interface():
 			view.destroy()
 			view_interface()
 
-		Button(import_interface, text="import", command=import_act).place(x=80, y=180)
+		Button(import_interface, text="Import", command=import_act).place(x=50, y=180)
+
+		def close_outer():
+			import_interface.destroy()
+		Button(import_interface, text="Close", command=close_outer).place(x=140, y=180)
 
 
 	Button(view, text="Import from .CSV", command=import_from_csv).place(x=30, y=210)
@@ -556,13 +564,23 @@ def view_interface():
 				f.close()
 
 			Button(RE_result_view, text="Export to .CSV", command=export_to_csv).grid(row=2, column=0)
+			def close():
+				RE_result_view.destroy()
+			Button(RE_result_view, text="Close", command=close).grid(row=3, column=0)
 
 		Button(RE_filter, text="Run", command=RE_submit).place(x=30, y=170)
 
+		def close():
+			RE_filter.destroy()
+		Button(RE_filter, text="Close", command=close).place(x=100, y=170)
 
 
-	Button(view, text="Filter with\nRegular Expression", height=2, command=RE).place(x=30, y=240)
 
+	Button(view, text="Regular Expression", command=RE).place(x=30, y=240)
+
+	def close():
+		view.destroy()
+	Button(view, text="Close", height=2, command=close, font='Helvetica 15').place(x=30, y=400)
 
 ############################################################################################################################################################
 ############################################################################################################################################################
@@ -644,6 +662,8 @@ def build():
 	view_interface()
 Button(root, text = 'Build', command = build).place(x = 100, y=210)
 
-
+def close():
+	root.destroy()
+Button(root, text = 'Close', command = close).place(x = 450, y=260)
 
 mainloop()
