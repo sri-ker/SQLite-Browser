@@ -1,4 +1,4 @@
-# SQLite-Viewer
+# SQLite-Browser
 This is an application with GUI for viewing SQLite database files (more features in plan, like executing queries). It's written with Python and GUI is implemented with Tkinter library.
 
 ## Features
