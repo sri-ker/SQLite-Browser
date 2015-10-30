@@ -2,7 +2,7 @@
 *SQLite Brwoser* is an application with GUI for browsing SQLite database files and do manipulations. Other than normal features, one module is developed to filter and select data with regular expression.
 This software is written with Python, and GUI is implemented with Tkinter library.
 
-Please navigate link [me.seekingQED.com/SQLite-Browser](https://me.seekingQED.com/SQLite-Browser) for details.
+Please navigate link [me.seekingQED.com/SQLite-Browser](http://me.seekingQED.com/SQLite-Browser) for details.
 
 ## Features
 
