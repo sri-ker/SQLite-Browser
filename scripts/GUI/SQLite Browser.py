@@ -7,7 +7,7 @@ import re  # for regular expression filter module
 import sqlite3
 
 
-app_name = "SQLite View"
+app_name = "SQLite Browser"
 version_num = "0.15"
 
 ############################################################################################################################################################
